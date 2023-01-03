@@ -18,4 +18,4 @@ const postSchema = new mongoose.Schema({
   comments: [commentSchema]
 });
 
-export default mongoose.model('Posts', postSchema);
+export default mongoose.model('Post', postSchema);
