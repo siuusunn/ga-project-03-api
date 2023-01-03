@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { DB_URI } from '../config/environment.js';
 
 export const connectDb = () => {
   mongoose.set('strictQuery', true);
