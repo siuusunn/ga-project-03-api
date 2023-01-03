@@ -1,9 +1,9 @@
 import express from 'express';
 import commentsController from '../controllers/commentsController.js';
 import postsController from '../controllers/postsController.js';
-import usersController from "../controllers/usersController.js";
+import usersController from '../controllers/usersController.js';
 
-const Router= express.Router();
+const Router = express.Router();
 
 Router.route('/posts')
   .get(postsController.getAllPosts)
@@ -14,20 +14,13 @@ Router.route('/posts/:id')
   .put(postsController.updateSinglePost)
   .delete(postsController.deleteSinglePost);
 
-
-
-Router.route('/posts/:id/comments')
-.post(commentsController.createComment)
-
+Router.route('/posts/:id/comments').post(commentsController.createComment);
 
 Router.route('/posts/:id/comments/:commentId')
-.put(commentsController.updateComment)
-.delete(commentsController.deleteComment);
-
+  .put(commentsController.updateComment)
+  .delete(commentsController.deleteComment);
 
 Router.route('/register').post(usersController.registerUser);
-
-
 
 Router.route('/login').post(usersController.loginUser);
 
