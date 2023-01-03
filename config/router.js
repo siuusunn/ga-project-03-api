@@ -1,6 +1,7 @@
 import express from 'express';
 import commentsController from '../controllers/commentsController.js';
 import postsController from '../controllers/postsController.js';
+import usersController from "../controllers/usersController.js";
 
 const Router= express.Router();
 
@@ -24,10 +25,10 @@ Router.route('/posts/:id/comments/:commentId')
 .delete(commentsController.deleteComment);
 
 
-Router.route('/register').post(userController.registerUser);
+Router.route('/register').post(usersController.registerUser);
 
 
 
-Router.route('/login').post(userController.loginUser);
+Router.route('/login').post(usersController.loginUser);
 
 export default Router;

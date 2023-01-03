@@ -11,4 +11,4 @@ async function deleteComment(req, res, next) {
 
 }
 
-export default { createReview, updateReview, deleteReview };
+export default { createComment, updateComment, deleteComment };
