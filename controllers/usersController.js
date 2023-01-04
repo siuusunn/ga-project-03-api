@@ -45,4 +45,15 @@ async function loginUser(req, res, next) {
   }
 }
 
-export default { registerUser, loginUser };
+const getSingleUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    return user
+      ? res.status(200).json(user)
+      : res.status(404).json({ message: `No user with id ${req.params.id}` });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default { registerUser, loginUser, getSingleUser };
