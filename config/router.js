@@ -13,14 +13,18 @@ Router.route('/posts')
 
 Router.route('/posts/:id')
   .get(postsController.getSinglePost)
-  .put(postsController.updateSinglePost)
-  .delete(postsController.deleteSinglePost);
+  .put(secureRoute, postsController.updateSinglePost)
+  .delete(secureRoute, postsController.deleteSinglePost);
 
-Router.route('/posts/:id/comments').post(commentsController.createComment);
+Router.route('/posts/:id/comments').post(
+  secureRoute,
+  commentsController.createComment
+);
 
 Router.route('/posts/:id/comments/:commentId')
-  .put(commentsController.updateComment)
-  .delete(commentsController.deleteComment);
+  .post(secureRoute, commentsController.createComment)
+  .put(secureRoute, commentsController.updateComment)
+  .delete(secureRoute, commentsController.deleteComment);
 
 Router.route('/register').post(usersController.registerUser);
 
