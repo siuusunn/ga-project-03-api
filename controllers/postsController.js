@@ -21,10 +21,28 @@ const createNewPost = async (req, res, next) => {
 };
 
 const getSinglePost = async (req, res, next) => {
+  const nestedCommentLimit = 5;
+
+  const firstObj = {
+    path: 'comments',
+    populate: { path: 'comments' }
+  };
+
+  const recursiveObjectFunc = (firstObj) => {
+    const nextObj = {
+      path: 'comments',
+      populate: recursiveObjectFunc(firstObj)
+    };
+    return nextObj;
+  };
+
   try {
     const post = await PostModels.Post.findById(req.params.id).populate({
       path: 'comments',
-      populate: { path: 'comments' }
+      populate: {
+        path: 'comments',
+        populate: { path: 'comments', populate: { path: 'comments' } }
+      }
     });
     return post
       ? res.status(200).json(post)
