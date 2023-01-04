@@ -47,7 +47,7 @@ const deleteSinglePost = async (req, res, next) => {
       return res.status(404).send({ message: 'No post found' });
     }
     if (req.currentUser._id.equals(post.addedBy) || req.currentUser.isAdmin) {
-      await Post.findByIdAndDelete(req.prams.id);
+      await Post.findByIdAndDelete(req.params.id);
       return res.status(200).json({ message: 'Sucessfully deleted' });
     }
 
