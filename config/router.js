@@ -26,6 +26,8 @@ Router.route('/posts/:id/comments/:commentId')
   .put(secureRoute, commentsController.updateComment)
   .delete(secureRoute, commentsController.deleteComment);
 
+Router.route('/users').get(usersController.getAllUsers);
+
 Router.route('/users/:id').get(usersController.getSingleUser);
 
 Router.route('/register').post(usersController.registerUser);

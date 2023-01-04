@@ -45,6 +45,15 @@ async function loginUser(req, res, next) {
   }
 }
 
+const getAllUsers = async (_req, res, next) => {
+  try {
+    const users = await User.find();
+    return res.status(200).json(users);
+  } catch (e) {
+    next(e);
+  }
+};
+
 const getSingleUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
@@ -56,4 +65,4 @@ const getSingleUser = async (req, res, next) => {
   }
 };
 
-export default { registerUser, loginUser, getSingleUser };
+export default { registerUser, loginUser, getAllUsers, getSingleUser };
