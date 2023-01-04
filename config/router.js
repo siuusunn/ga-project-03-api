@@ -2,6 +2,7 @@ import express from 'express';
 import commentsController from '../controllers/commentsController.js';
 import postsController from '../controllers/postsController.js';
 import usersController from '../controllers/usersController.js';
+import { PostModels } from '../models/post.js';
 
 import secureRoute from '../middleware/secureRoute.js';
 
@@ -16,15 +17,21 @@ Router.route('/posts/:id')
   .put(secureRoute, postsController.updateSinglePost)
   .delete(secureRoute, postsController.deleteSinglePost);
 
-Router.route('/posts/:id/comments').post(
-  secureRoute,
-  commentsController.createComment
-);
-
+// Adding comment to another comment, so we past the Comment model as an argument
 Router.route('/posts/:id/comments/:commentId')
-  .post(secureRoute, commentsController.createComment)
   .put(secureRoute, commentsController.updateComment)
   .delete(secureRoute, commentsController.deleteComment);
+
+Router.route('/comments/:commentId').post(secureRoute, (req, res, next) => {
+  const id = req.params.commentId;
+  return commentsController.createComment(req, res, next, PostModels.Comment, id);
+});
+
+// Adding comment to a post, so we pass the Post model as an argument
+Router.route('/posts/:id/comments').post(secureRoute, (req, res, next) => {
+  const id = req.params.id;
+  commentsController.createComment(req, res, next, PostModels.Post, id);
+});
 
 Router.route('/register').post(usersController.registerUser);
 
