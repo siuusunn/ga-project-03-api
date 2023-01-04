@@ -10,7 +10,8 @@ const commentSchema = new mongoose.Schema({
 });
 
 const postSchema = new mongoose.Schema({
-  text: { type: String, required: true, min: 1, max: 1000 },
+  topic: { type: String, required: true, min: 1, max: 200 },
+  content: { type: String, required: true, min: 1, max: 1000 },
   addedBy: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
   timestamp: { type: String },
   likes: { type: Number, min: 0, default: 0 },

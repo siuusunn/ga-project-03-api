@@ -17,22 +17,28 @@ Router.route('/posts/:id')
   .put(secureRoute, postsController.updateSinglePost)
   .delete(secureRoute, postsController.deleteSinglePost);
 
-// Adding comment to another comment, so we past the Comment model as an argument
+// edit & delete a comment
+// will probably simplify this route to be more like the below
+// (don't need to have post id when deleting a comment)
 Router.route('/posts/:id/comments/:commentId')
   .put(secureRoute, commentsController.updateComment)
   .delete(secureRoute, commentsController.deleteComment);
 
-  // Version 2 of adding a comment to another comment
+// Adding comment to a comment, pass the Comment model and comment id as arguments
 Router.route('/comments/:commentId').post(secureRoute, (req, res, next) => {
   const id = req.params.commentId;
   return commentsController.createComment(req, res, next, PostModels.Comment, id);
 });
 
-// Adding comment to a post, so we pass the Post model as an argument
+// Adding comment to a post, pass the Post model & post id as arguments
 Router.route('/posts/:id/comments').post(secureRoute, (req, res, next) => {
   const id = req.params.id;
   commentsController.createComment(req, res, next, PostModels.Post, id);
 });
+
+Router.route('/users').get(usersController.getAllUsers);
+
+Router.route('/users/:id').get(usersController.getSingleUser);
 
 Router.route('/register').post(usersController.registerUser);
 
