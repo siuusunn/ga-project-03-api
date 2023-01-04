@@ -22,7 +22,10 @@ const createNewPost = async (req, res, next) => {
 
 const getSinglePost = async (req, res, next) => {
   try {
-    const post = await PostModels.Post.findById(req.params.id);
+    const post = await PostModels.Post.findById(req.params.id).populate({
+      path: 'comments',
+      populate: { path: 'comments' }
+    });
     return post
       ? res.status(200).json(post)
       : res.status(404).json({ message: `No post with id ${req.params.id}` });
@@ -33,7 +36,10 @@ const getSinglePost = async (req, res, next) => {
 
 const updateSinglePost = async (req, res, next) => {
   try {
-    const post = await PostModels.Post.findByIdAndUpdate(req.params.id, req.body);
+    const post = await PostModels.Post.findByIdAndUpdate(
+      req.params.id,
+      req.body
+    );
     post.set(req.body);
     const updatedPost = await post.save();
     return res.status(200).json(updatedPost);

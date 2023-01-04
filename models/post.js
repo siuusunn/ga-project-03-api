@@ -5,10 +5,9 @@ const commentSchema = new mongoose.Schema({
   addedBy: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
   timestamp: { type: String },
   likes: { type: Number, min: 0, default: 0 },
-  dislikes: { type: Number, min: 0, default: 0 }
+  dislikes: { type: Number, min: 0, default: 0 },
+  comments: [{ type: mongoose.Schema.ObjectId, ref: 'Comment' }]
 });
-
-commentSchema.add({ comments: [commentSchema] });
 
 const postSchema = new mongoose.Schema({
   text: { type: String, required: true, min: 1, max: 1000 },
@@ -16,7 +15,7 @@ const postSchema = new mongoose.Schema({
   timestamp: { type: String },
   likes: { type: Number, min: 0, default: 0 },
   dislikes: { type: Number, min: 0, default: 0 },
-  comments: [commentSchema]
+  comments: [{ type: mongoose.Schema.ObjectId, ref: 'Comment' }]
 });
 
 const Post = mongoose.model('Post', postSchema);

@@ -22,6 +22,7 @@ Router.route('/posts/:id/comments/:commentId')
   .put(secureRoute, commentsController.updateComment)
   .delete(secureRoute, commentsController.deleteComment);
 
+  // Version 2 of adding a comment to another comment
 Router.route('/comments/:commentId').post(secureRoute, (req, res, next) => {
   const id = req.params.commentId;
   return commentsController.createComment(req, res, next, PostModels.Comment, id);

@@ -2,6 +2,13 @@ import { PostModels } from '../models/post.js';
 
 async function createComment(req, res, next, parentType, parentId) {
   try {
+    const newComment = {
+      ...req.body,
+      addedBy: req.currentUser._id
+    };
+
+    const { _id } = await PostModels.Comment.create(newComment);
+
     const parent = await parentType.findById(parentId);
     if (!parent) {
       return res
@@ -9,14 +16,7 @@ async function createComment(req, res, next, parentType, parentId) {
         .send({ message: `Parent with id ${parentId} not found` });
     }
 
-    console.log(JSON.stringify(parent));
-
-    const newComment = {
-      ...req.body,
-      addedBy: req.currentUser._id
-    };
-
-    parent.comments.push(newComment);
+    parent.comments.push(_id);
 
     const savedParent = await parent.save();
 

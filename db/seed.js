@@ -1,5 +1,6 @@
 import { connectDb, disconnectDb } from './helpers.js';
 import User from '../models/user.js';
+import { PostModels } from '../models/post.js';
 
 const adminUser = {
   username: 'admin',
@@ -22,6 +23,14 @@ async function seedDb() {
   console.log('🤖 Deleting all the users...');
   await User.deleteMany();
   console.log('🤖 Successfully deleted all users');
+
+  console.log('🤖 Deleting all the posts...');
+  await PostModels.Post.deleteMany();
+  console.log('🤖 Successfully deleted all posts');
+
+  console.log('🤖 Deleting all the comments...');
+  await PostModels.Comment.deleteMany();
+  console.log('🤖 Successfully deleted all comments');
 
   const user = await User.create(adminUser, nonAdminUser);
   console.log(`🤖 Successfully created the admin user with id: ${user._id}`);
