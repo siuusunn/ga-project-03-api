@@ -16,17 +16,16 @@ const secureRoute = async (req, res, next) => {
       if (err) {
         return res.status(301).json({ message: 'Unauthorized, 2' });
       }
+      const user = await User.findById(data.userId);
+
+      if (!user) {
+        return res.status(301).json({ message: 'Unauthorized, 3' });
+      }
+
+      req.currentUser = user;
+
+      next();
     });
-
-    const user = await User.findById(data.userId);
-
-    if (!user) {
-      return res.status(301).json({ message: 'Unauthorized, 3' });
-    }
-
-    req.currentUser = user;
-
-    next();
   } catch (e) {
     return res.status(301).json({ message: 'Unauthorized, 4' });
   }
