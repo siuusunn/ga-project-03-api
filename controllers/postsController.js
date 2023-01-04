@@ -33,7 +33,9 @@ const getSinglePost = async (req, res, next) => {
 
 const updateSinglePost = async (req, res, next) => {
   try {
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body);
+    const post = await Post.findByIdAndUpdate(req.params.id, req.body);
+    post.set(req.body);
+    const updatedPost = await post.save();
     return res.status(200).json(updatedPost);
   } catch (e) {
     next(e);
