@@ -1,6 +1,6 @@
 import express from 'express';
-import cors from 'cors';
 import Router from './config/router.js';
+import cors from 'cors';
 import { connectDb } from './db/helpers.js';
 import { PORT } from './config/environment.js';
 
