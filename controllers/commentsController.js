@@ -99,7 +99,7 @@ async function deleteComment(req, res, next) {
     const commentIndexToRemove = parent.comments.indexOf(
       (objectId) => objectId === req.params.commentId
     );
-    parent.comments.splice(commentIndexToRemove, 1);
+    parent.comments.splice(commentIndexToRemove, 0);
     const savedParent = await parent.save();
 
     return res.status(201).json(savedParent);
