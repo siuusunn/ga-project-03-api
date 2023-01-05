@@ -1,25 +1,26 @@
-import Post from '../models/post.js';
+import { PostModels } from '../models/post.js';
 
-async function createComment(req, res, next) {
+async function createComment(req, res, next, parentType, parentId) {
   try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res
-        .status(404)
-        .send({ message: `Post with id ${req.params.id} not found` });
-    }
-    console.log('req is', req.body);
-
     const newComment = {
       ...req.body,
       addedBy: req.currentUser._id
     };
 
-    post.comments.push(newComment);
+    const { _id } = await PostModels.Comment.create(newComment);
 
-    const savedPost = await post.save();
+    const parent = await parentType.findById(parentId);
+    if (!parent) {
+      return res
+        .status(404)
+        .send({ message: `Parent with id ${parentId} not found` });
+    }
 
-    return res.status(201).json(savedPost);
+    parent.comments.push(_id);
+
+    const savedParent = await parent.save();
+
+    return res.status(201).json(savedParent);
   } catch (error) {
     next(error);
   }
@@ -27,7 +28,7 @@ async function createComment(req, res, next) {
 
 async function updateComment(req, res, next) {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await PostModels.Post.findById(req.params.id);
 
     if (!post) {
       return res
@@ -58,7 +59,7 @@ async function updateComment(req, res, next) {
 
 async function deleteComment(req, res, next) {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await PostModels.Post.findById(req.params.id);
 
     if (!post) {
       return res

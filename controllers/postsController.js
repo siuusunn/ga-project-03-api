@@ -1,8 +1,8 @@
-import Post from '../models/post.js';
+import { PostModels } from '../models/post.js';
 
 const getAllPosts = async (_res, res, next) => {
   try {
-    const posts = await Post.find();
+    const posts = await PostModels.Post.find();
     return res.status(200).json(posts);
   } catch (e) {
     next(e);
@@ -10,7 +10,7 @@ const getAllPosts = async (_res, res, next) => {
 };
 const createNewPost = async (req, res, next) => {
   try {
-    const post = await Post.create({
+    const post = await PostModels.Post.create({
       ...req.body,
       addedBy: req.currentUser._id
     });
@@ -22,7 +22,33 @@ const createNewPost = async (req, res, next) => {
 
 const getSinglePost = async (req, res, next) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await PostModels.Post.findById(req.params.id).populate([
+      { path: 'addedBy' },
+      {
+        path: 'comments',
+        populate: [
+          { path: 'addedBy' },
+          {
+            path: 'comments',
+            populate: [
+              { path: 'addedBy' },
+              {
+                path: 'comments',
+                populate: [
+                  { path: 'addedBy' },
+                  {
+                    path: 'comments',
+                    populate: {
+                      path: 'comments'
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]);
     return post
       ? res.status(200).json(post)
       : res.status(404).json({ message: `No post with id ${req.params.id}` });
@@ -33,7 +59,10 @@ const getSinglePost = async (req, res, next) => {
 
 const updateSinglePost = async (req, res, next) => {
   try {
-    const post = await Post.findByIdAndUpdate(req.params.id, req.body);
+    const post = await PostModels.Post.findByIdAndUpdate(
+      req.params.id,
+      req.body
+    );
     post.set(req.body);
     const updatedPost = await post.save();
     return res.status(200).json(updatedPost);
@@ -44,7 +73,7 @@ const updateSinglePost = async (req, res, next) => {
 
 const deleteSinglePost = async (req, res, next) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await PostModels.Post.findById(req.params.id);
     if (!post) {
       return res.status(404).send({ message: 'No post found' });
     }
