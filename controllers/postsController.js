@@ -67,6 +67,8 @@ const getSinglePost = async (req, res, next) => {
         ]
       }
     ]);
+    console.log(post);
+
     return post
       ? res.status(200).json(post)
       : res.status(404).json({ message: `No post with id ${req.params.id}` });

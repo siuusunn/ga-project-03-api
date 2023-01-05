@@ -8,7 +8,9 @@ const commentSchema = new mongoose.Schema({
   dislikes: { type: Number, min: 0, default: 0 },
   parentPostId: { type: mongoose.Schema.ObjectId, ref: 'Post' },
   parentCommentId: { type: mongoose.Schema.ObjectId, ref: 'Comment' },
-  comments: [{ type: mongoose.Schema.ObjectId, ref: 'Comment' }]
+  comments: [{ type: mongoose.Schema.ObjectId, ref: 'Comment' }],
+  deletedComments: [{ type: mongoose.Schema.ObjectId }],
+  isDeleted: { type: Boolean, default: false }
 });
 
 const postSchema = new mongoose.Schema({
