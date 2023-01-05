@@ -80,9 +80,40 @@ async function deleteComment(req, res, next) {
       return res.status(401).send({ message: 'Unauthorized' });
     }
 
-    comment.remove();
+    let parent;
+    // if (comment.parentPostId) {
+    //   parent = await PostModels.Post.findById(comment.parentPostId);
+    // }
+    if (comment.parentCommentId) {
+      parent = await PostModels.Comment.findById(comment.parentCommentId);
+      parent.deletedComments.push(req.params.commentId);
+    }
 
-    return res.status(200).send({ message: 'deleted comment successfully' });
+    // if (!parent) {
+    //   return res
+    //     .status(404)
+    //     .send({ message: `Couldn't find the parent of this post` });
+    // }
+
+    // const commentIndexToRemove = parent.comments.indexOf(
+    //   (objectId) => objectId === req.params.commentId
+    // );
+    // console.log(commentIndexToRemove);
+
+    // parent.comments.splice(commentIndexToRemove, 1);
+    // const savedParent = await parent.save();
+
+    const updatedComment = await comment.updateOne({
+      $set: {
+        text: '',
+        isDeleted: true
+      },
+      $unset: {
+        addedBy: ''
+      }
+    });
+
+    return res.status(201).json(updatedComment);
   } catch (error) {
     next(error);
   }
