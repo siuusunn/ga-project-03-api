@@ -17,18 +17,20 @@ Router.route('/posts/:id')
   .put(secureRoute, postsController.updateSinglePost)
   .delete(secureRoute, postsController.deleteSinglePost);
 
-// edit & delete a comment
-// will probably simplify this route to be more like the below
-// (don't need to have post id when deleting a comment)
-Router.route('/posts/:id/comments/:commentId')
+// Adding comment to a comment, pass the Comment model and comment id as arguments
+Router.route('/comments/:commentId')
+  .post(secureRoute, (req, res, next) => {
+    const id = req.params.commentId;
+    return commentsController.createComment(
+      req,
+      res,
+      next,
+      PostModels.Comment,
+      id
+    );
+  })
   .put(secureRoute, commentsController.updateComment)
   .delete(secureRoute, commentsController.deleteComment);
-
-// Adding comment to a comment, pass the Comment model and comment id as arguments
-Router.route('/comments/:commentId').post(secureRoute, (req, res, next) => {
-  const id = req.params.commentId;
-  return commentsController.createComment(req, res, next, PostModels.Comment, id);
-});
 
 // Adding comment to a post, pass the Post model & post id as arguments
 Router.route('/posts/:id/comments').post(secureRoute, (req, res, next) => {

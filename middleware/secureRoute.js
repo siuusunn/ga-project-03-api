@@ -7,7 +7,7 @@ const secureRoute = async (req, res, next) => {
     const authToken = req.headers.authorization;
 
     if (!authToken || !authToken.startsWith('Bearer')) {
-      return res.status(301).json({ message: 'Unauthorized, 1' });
+      return res.status(301).json({ message: 'Unauthorized, secureRoute 1' });
     }
 
     const token = authToken.substring(7);

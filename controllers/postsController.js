@@ -23,6 +23,8 @@ const createNewPost = async (req, res, next) => {
 const getSinglePost = async (req, res, next) => {
   try {
     const post = await PostModels.Post.findById(req.params.id).populate([
+      // this performs a deep populate of comments and their addedBy usernames
+      // down to a certain depth
       { path: 'addedBy' },
       {
         path: 'comments',

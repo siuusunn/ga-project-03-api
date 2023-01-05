@@ -59,18 +59,12 @@ async function updateComment(req, res, next) {
 
 async function deleteComment(req, res, next) {
   try {
-    const post = await PostModels.Post.findById(req.params.id);
-
-    if (!post) {
-      return res
-        .status(404)
-        .send({ message: `No post found with id ${req.params.id}` });
-    }
-
-    const comment = post.comments.id(req.params.commentId);
+    const comment = await PostModels.Comment.findById(req.params.commentId);
 
     if (!comment) {
-      return res.status(404).send({ message: 'Comment  not found' });
+      return res
+        .status(404)
+        .send({ message: `No comment found with id ${req.params.commentId}` });
     }
     if (
       !comment.addedBy.equals(req.currentUser._id) ||
@@ -81,9 +75,7 @@ async function deleteComment(req, res, next) {
 
     comment.remove();
 
-    const savedPost = await post.save();
-
-    return res.status(200).json(savedPost);
+    return res.status(200).send({ message: 'deleted comment successfully' });
   } catch (error) {
     next(error);
   }
