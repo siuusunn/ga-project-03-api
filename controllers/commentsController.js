@@ -7,6 +7,13 @@ async function createComment(req, res, next, parentType, parentId) {
       addedBy: req.currentUser._id
     };
 
+    if (parentType === PostModels.Comment) {
+      newComment.parentCommentId = parentId;
+    }
+    if (parentType === PostModels.Post) {
+      newComment.parentPostId = parentId;
+    }
+
     const { _id } = await PostModels.Comment.create(newComment);
 
     const parent = await parentType.findById(parentId);

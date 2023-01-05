@@ -20,13 +20,12 @@ Router.route('/posts/:id')
 // Adding comment to a comment, pass the Comment model and comment id as arguments
 Router.route('/comments/:commentId')
   .post(secureRoute, (req, res, next) => {
-    const id = req.params.commentId;
     return commentsController.createComment(
       req,
       res,
       next,
       PostModels.Comment,
-      id
+      req.params.commentId
     );
   })
   .put(secureRoute, commentsController.updateComment)
@@ -34,8 +33,13 @@ Router.route('/comments/:commentId')
 
 // Adding comment to a post, pass the Post model & post id as arguments
 Router.route('/posts/:id/comments').post(secureRoute, (req, res, next) => {
-  const id = req.params.id;
-  commentsController.createComment(req, res, next, PostModels.Post, id);
+  commentsController.createComment(
+    req,
+    res,
+    next,
+    PostModels.Post,
+    req.params.id
+  );
 });
 
 Router.route('/users').get(usersController.getAllUsers);
