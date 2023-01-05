@@ -80,9 +80,29 @@ async function deleteComment(req, res, next) {
       return res.status(401).send({ message: 'Unauthorized' });
     }
 
+    let parent;
+    if (comment.parentPostId) {
+      parent = await PostModels.Post.findById(comment.parentPostId);
+    }
+    if (comment.parentCommentId) {
+      parent = await PostModels.Comment.findById(comment.parentCommentId);
+    }
+
+    if (!parent) {
+      return res
+        .status(404)
+        .send({ message: `Couldn't find the parent of this post` });
+    }
+
     comment.remove();
 
-    return res.status(200).send({ message: 'deleted comment successfully' });
+    const commentIndexToRemove = parent.comments.indexOf(
+      (objectId) => objectId === req.params.commentId
+    );
+    parent.comments.splice(commentIndexToRemove, 1);
+    const savedParent = await parent.save();
+
+    return res.status(201).json(savedParent);
   } catch (error) {
     next(error);
   }
