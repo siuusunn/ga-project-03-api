@@ -6,19 +6,22 @@ const adminUser = {
   username: 'admin',
   password: 'P@ssword01',
   email: 'admin@admin.com',
-  isAdmin: true
+  isAdmin: true,
+  cloudinaryImageId: 'Senior-Manager-495x400_qrzolm'
 };
 
 const nonAdminUser1 = {
   username: 'nonadmin1',
   password: 'P@ssword01',
-  email: 'nonadmin1@nonadmin.com'
+  email: 'nonadmin1@nonadmin.com',
+  cloudinaryImageId: 'koala_s0t1ey'
 };
 
 const nonAdminUser2 = {
   username: 'nonadmin2',
   password: 'P@ssword01',
-  email: 'nonadmin2@nonadmin.com'
+  email: 'nonadmin2@nonadmin.com',
+  cloudinaryImageId: 'cover3_tl0ogw'
 };
 
 const postsByAdmin = [
