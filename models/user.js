@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema(
           password
         )
     },
+    posts: [{ type: mongoose.Types.ObjectId, ref: 'Posts' }],
     cloudinaryImageId: { type: String }
   },
   { timestamps: true }

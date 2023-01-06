@@ -91,6 +91,12 @@ async function seedDb() {
     addedBy: admin._id
   }));
   const adminPostsFromDb = await PostModels.Post.create(updatedAdminPosts);
+
+  await User.findOneAndUpdate(
+    { _id: admin._id },
+    { $push: { posts: adminPostsFromDb.map((post) => post._id) } }
+  );
+
   console.log(`🤖 Successfully created posts by Admin: ${adminPostsFromDb}`);
 
   // create non-admin 1 posts
@@ -101,6 +107,12 @@ async function seedDb() {
   const nonAdmin1PostsFromDb = await PostModels.Post.create(
     updatedNonAdmin1Posts
   );
+
+  await User.findOneAndUpdate(
+    { _id: nonAdmin1._id },
+    { $push: { posts: nonAdmin1PostsFromDb.map((post) => post._id) } }
+  );
+
   console.log(
     `🤖 Successfully created posts by non-admin 1: ${nonAdmin1PostsFromDb}`
   );
@@ -113,6 +125,12 @@ async function seedDb() {
   const nonAdmin2PostsFromDb = await PostModels.Post.create(
     updatedNonAdmin2Posts
   );
+
+  await User.findOneAndUpdate(
+    { _id: nonAdmin2._id },
+    { $push: { posts: nonAdmin2PostsFromDb.map((post) => post._id) } }
+  );
+
   console.log(
     `🤖 Successfully created posts by non-admin 2: ${nonAdmin2PostsFromDb}`
   );
