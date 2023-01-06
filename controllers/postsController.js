@@ -3,7 +3,7 @@ import User from '../models/user.js';
 
 const getAllPosts = async (_res, res, next) => {
   try {
-    const posts = await PostModels.Post.find();
+    const posts = await PostModels.Post.find().populate('addedBy');
     return res.status(200).json(posts);
   } catch (e) {
     next(e);
