@@ -1,4 +1,5 @@
 import { PostModels } from '../models/post.js';
+import User from '../models/user.js';
 
 const getAllPosts = async (_res, res, next) => {
   try {
@@ -14,6 +15,14 @@ const createNewPost = async (req, res, next) => {
       ...req.body,
       addedBy: req.currentUser._id
     });
+
+    console.log(post);
+
+    await User.findOneAndUpdate(
+      { _id: post.addedBy },
+      { $push: { posts: post._id } }
+    );
+
     return res.status(201).json(post);
   } catch (e) {
     next(e);
