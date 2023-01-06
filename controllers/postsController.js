@@ -67,7 +67,6 @@ const getSinglePost = async (req, res, next) => {
         ]
       }
     ]);
-    console.log(post);
 
     return post
       ? res.status(200).json(post)
