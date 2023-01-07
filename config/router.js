@@ -19,6 +19,7 @@ Router.route('/posts/:id')
 
 // Adding comment to a comment, pass the Comment model and comment id as arguments
 Router.route('/comments/:commentId')
+  .get(commentsController.getComment)
   .post(secureRoute, (req, res, next) => {
     return commentsController.createComment(
       req,
