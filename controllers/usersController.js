@@ -57,6 +57,7 @@ const getAllUsers = async (_req, res, next) => {
 const getSingleUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
+    console.log(user);
     return user
       ? res.status(200).json(user)
       : res.status(404).json({ message: `No user with id ${req.params.id}` });
@@ -65,4 +66,26 @@ const getSingleUser = async (req, res, next) => {
   }
 };
 
-export default { registerUser, loginUser, getAllUsers, getSingleUser };
+const editSingleUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (req.currentUser._id.equals(user._id)) {
+      user.set(req.body);
+      const updatedUser = await user.save();
+      return res.status(200).json(updatedUser);
+    }
+    return res.status(301).json({
+      message: "Unauthorized, you cannot update another user's profile"
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default {
+  registerUser,
+  loginUser,
+  getAllUsers,
+  getSingleUser,
+  editSingleUser
+};

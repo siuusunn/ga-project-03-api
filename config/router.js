@@ -44,7 +44,9 @@ Router.route('/posts/:id/comments').post(secureRoute, (req, res, next) => {
 
 Router.route('/users').get(usersController.getAllUsers);
 
-Router.route('/users/:id').get(usersController.getSingleUser);
+Router.route('/users/:id')
+  .get(usersController.getSingleUser)
+  .put(secureRoute, usersController.editSingleUser);
 
 Router.route('/register').post(usersController.registerUser);
 

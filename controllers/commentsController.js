@@ -1,4 +1,5 @@
 import { PostModels } from '../models/post.js';
+import User from '../models/user.js';
 
 async function createComment(req, res, next, parentType, parentId) {
   try {
