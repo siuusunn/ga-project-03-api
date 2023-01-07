@@ -101,15 +101,82 @@ const updateSinglePost = async (req, res, next) => {
 
 const deleteSinglePost = async (req, res, next) => {
   try {
-    const post = await PostModels.Post.findById(req.params.id);
+    const post = await PostModels.Post.findById(req.params.id).populate([
+      { path: 'addedBy' },
+      {
+        path: 'comments',
+        populate: [
+          { path: 'addedBy' },
+          {
+            path: 'comments',
+            populate: [
+              { path: 'addedBy' },
+              {
+                path: 'comments',
+                populate: [
+                  { path: 'addedBy' },
+                  {
+                    path: 'comments',
+                    populate: [
+                      { path: 'addedBy' },
+                      {
+                        path: 'comments',
+                        populate: [
+                          { path: 'addedBy' },
+                          {
+                            path: 'comments',
+                            populate: [
+                              { path: 'addedBy' },
+                              {
+                                path: 'comments',
+                                populate: {
+                                  path: 'comments'
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]);
+
     if (!post) {
       return res.status(404).send({ message: 'No post found' });
     }
+
     if (req.currentUser._id.equals(post.addedBy) || req.currentUser.isAdmin) {
+      // recursively get all comment ids, delete those comments
+      const idArray = [];
+      function getIds(postObject) {
+        idArray.push(postObject.id);
+        if (postObject.comments.length === 0) {
+          return;
+        }
+        postObject.comments.forEach((child) => getIds(child));
+      }
+      getIds(post);
+      // remove first id, which will be the parent post id
+      idArray.shift();
+      // delete each comment
+      for (let id of idArray) {
+        try {
+          await PostModels.Comment.findByIdAndDelete(id);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      // delete post itself
       await PostModels.Post.findByIdAndDelete(req.params.id);
       return res.status(200).json({ message: 'Sucessfully deleted' });
     }
-
     return res.status(301).json({ message: 'Unauthorized' });
   } catch (e) {
     next(e);
