@@ -38,7 +38,7 @@ async function loginUser(req, res, next) {
 
     return res.status(202).send({
       token,
-      message: `Login successful! Welcome back, ${user.username}!`
+      message: `Welcome back, ${user.username}!`
     });
   } catch (e) {
     next(e);
