@@ -26,9 +26,27 @@ async function createComment(req, res, next, parentType, parentId) {
 
     parent.comments.push(_id);
 
+    // await User.findOneAndUpdate(
+    //   { _id: req.currentUser._id },
+    //   { $push: { comments: _id._id } }
+    // );
+
     const savedParent = await parent.save();
 
     return res.status(201).json(savedParent);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getComment(req, res, next) {
+  try {
+    const comment = await PostModels.Post.findById(req.params.id);
+    return comment
+      ? res.status(200).json(comment)
+      : res
+          .status(404)
+          .json({ message: `No comment with id ${req.params.id}` });
   } catch (error) {
     next(error);
   }
@@ -120,4 +138,4 @@ async function deleteComment(req, res, next) {
   }
 }
 
-export default { createComment, updateComment, deleteComment };
+export default { createComment, updateComment, deleteComment, getComment };
