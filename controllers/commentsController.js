@@ -91,47 +91,52 @@ async function deleteComment(req, res, next) {
         .status(404)
         .send({ message: `No comment found with id ${req.params.commentId}` });
     }
+    console.log(req.currentUser._id);
+    console.log(comment.addedBy._id);
+
     if (
-      !comment.addedBy.equals(req.currentUser._id) ||
-      !req.currentUser.isAdmin
+      comment.addedBy._id.equals(req.currentUser._id) ||
+      req.currentUser.isAdmin
     ) {
-      return res.status(401).send({ message: 'Unauthorized' });
-    }
-
-    let parent;
-    // if (comment.parentPostId) {
-    //   parent = await PostModels.Post.findById(comment.parentPostId);
-    // }
-    if (comment.parentCommentId) {
-      parent = await PostModels.Comment.findById(comment.parentCommentId);
-      parent.deletedComments.push(req.params.commentId);
-    }
-
-    // if (!parent) {
-    //   return res
-    //     .status(404)
-    //     .send({ message: `Couldn't find the parent of this post` });
-    // }
-
-    // const commentIndexToRemove = parent.comments.indexOf(
-    //   (objectId) => objectId === req.params.commentId
-    // );
-    // console.log(commentIndexToRemove);
-
-    // parent.comments.splice(commentIndexToRemove, 1);
-    // const savedParent = await parent.save();
-
-    const updatedComment = await comment.updateOne({
-      $set: {
-        text: '',
-        isDeleted: true
-      },
-      $unset: {
-        addedBy: ''
+      let parent;
+      // if (comment.parentPostId) {
+      //   parent = await PostModels.Post.findById(comment.parentPostId);
+      // }
+      if (comment.parentCommentId) {
+        parent = await PostModels.Comment.findById(comment.parentCommentId);
+        parent.deletedComments.push(req.params.commentId);
       }
-    });
 
-    return res.status(201).json(updatedComment);
+      // if (!parent) {
+      //   return res
+      //     .status(404)
+      //     .send({ message: `Couldn't find the parent of this post` });
+      // }
+
+      // const commentIndexToRemove = parent.comments.indexOf(
+      //   (objectId) => objectId === req.params.commentId
+      // );
+      // console.log(commentIndexToRemove);
+
+      // parent.comments.splice(commentIndexToRemove, 1);
+      // const savedParent = await parent.save();
+
+      const updatedComment = await comment.updateOne({
+        $set: {
+          text: '',
+          isDeleted: true
+        },
+        $unset: {
+          addedBy: ''
+        }
+      });
+
+      return res.status(201).json(updatedComment);
+    }
+
+    return res.status(401).send({
+      message: 'Unauthorized, deleteComment in commentsController'
+    });
   } catch (error) {
     next(error);
   }
