@@ -228,10 +228,8 @@ const deleteSinglePost = async (req, res, next) => {
 };
 
 async function searchPosts(req, res, next) {
-  console.log(req.query);
   try {
     const { search } = req.query;
-    console.log(search);
     const posts = await PostModels.Post.find({
       $or: [
         { topic: { $regex: search, $options: 'i' } },
