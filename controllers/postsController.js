@@ -16,8 +16,6 @@ const createNewPost = async (req, res, next) => {
       addedBy: req.currentUser._id
     });
 
-    console.log(post);
-
     await User.findOneAndUpdate(
       { _id: post.addedBy },
       { $push: { posts: post._id } }
@@ -188,7 +186,10 @@ const deleteSinglePost = async (req, res, next) => {
       return res.status(404).send({ message: 'No post found' });
     }
 
-    if (req.currentUser._id.equals(post.addedBy) || req.currentUser.isAdmin) {
+    if (
+      req.currentUser._id.equals(post.addedBy._id) ||
+      req.currentUser.isAdmin
+    ) {
       // recursively get all comment ids, delete those comments
       const idArray = [];
       function getIds(postObject) {
@@ -210,16 +211,17 @@ const deleteSinglePost = async (req, res, next) => {
         }
       }
 
-      // remove post from user's posts array
-      const user = await User.findByIdAndUpdate(req.currentUser._id, {
+      // remove post from post owner's posts array
+      const postOwner = await User.findByIdAndUpdate(post.addedBy._id, {
         $pull: { posts: post._id }
       });
+      await postOwner.save();
 
       // delete post itself
       await PostModels.Post.findByIdAndDelete(req.params.id);
       return res.status(200).json({ message: 'Sucessfully deleted' });
     }
-    return res.status(301).json({ message: 'Unauthorized' });
+    return res.status(301).json({ message: 'Unauthorized, deletePost in API' });
   } catch (e) {
     next(e);
   }
