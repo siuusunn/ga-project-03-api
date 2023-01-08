@@ -210,6 +210,11 @@ const deleteSinglePost = async (req, res, next) => {
         }
       }
 
+      // remove post from user's posts array
+      const user = await User.findByIdAndUpdate(req.currentUser._id, {
+        $pull: { posts: post._id }
+      });
+
       // delete post itself
       await PostModels.Post.findByIdAndDelete(req.params.id);
       return res.status(200).json({ message: 'Sucessfully deleted' });
