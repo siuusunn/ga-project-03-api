@@ -1,9 +1,9 @@
-import { PostModels } from '../models/post.js';
-import User from '../models/user.js';
+import { PostModels } from "../models/post.js";
+import User from "../models/user.js";
 
 const getAllPosts = async (_res, res, next) => {
   try {
-    const posts = await PostModels.Post.find().populate('addedBy');
+    const posts = await PostModels.Post.find().populate("addedBy");
     return res.status(200).json(posts);
   } catch (e) {
     next(e);
@@ -13,7 +13,7 @@ const createNewPost = async (req, res, next) => {
   try {
     const post = await PostModels.Post.create({
       ...req.body,
-      addedBy: req.currentUser._id
+      addedBy: req.currentUser._id,
     });
 
     console.log(post);
@@ -32,49 +32,49 @@ const createNewPost = async (req, res, next) => {
 const getSinglePost = async (req, res, next) => {
   try {
     const post = await PostModels.Post.findById(req.params.id).populate([
-      { path: 'addedBy' },
+      { path: "addedBy" },
       {
-        path: 'comments',
+        path: "comments",
         populate: [
-          { path: 'addedBy' },
+          { path: "addedBy" },
           {
-            path: 'comments',
+            path: "comments",
             populate: [
-              { path: 'addedBy' },
+              { path: "addedBy" },
               {
-                path: 'comments',
+                path: "comments",
                 populate: [
-                  { path: 'addedBy' },
+                  { path: "addedBy" },
                   {
-                    path: 'comments',
+                    path: "comments",
                     populate: [
-                      { path: 'addedBy' },
+                      { path: "addedBy" },
                       {
-                        path: 'comments',
+                        path: "comments",
                         populate: [
-                          { path: 'addedBy' },
+                          { path: "addedBy" },
                           {
-                            path: 'comments',
+                            path: "comments",
                             populate: [
-                              { path: 'addedBy' },
+                              { path: "addedBy" },
                               {
-                                path: 'comments',
+                                path: "comments",
                                 populate: {
-                                  path: 'comments'
-                                }
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
+                                  path: "comments",
+                                },
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ]);
 
     return post
@@ -102,53 +102,53 @@ const updateSinglePost = async (req, res, next) => {
 const deleteSinglePost = async (req, res, next) => {
   try {
     const post = await PostModels.Post.findById(req.params.id).populate([
-      { path: 'addedBy' },
+      { path: "addedBy" },
       {
-        path: 'comments',
+        path: "comments",
         populate: [
-          { path: 'addedBy' },
+          { path: "addedBy" },
           {
-            path: 'comments',
+            path: "comments",
             populate: [
-              { path: 'addedBy' },
+              { path: "addedBy" },
               {
-                path: 'comments',
+                path: "comments",
                 populate: [
-                  { path: 'addedBy' },
+                  { path: "addedBy" },
                   {
-                    path: 'comments',
+                    path: "comments",
                     populate: [
-                      { path: 'addedBy' },
+                      { path: "addedBy" },
                       {
-                        path: 'comments',
+                        path: "comments",
                         populate: [
-                          { path: 'addedBy' },
+                          { path: "addedBy" },
                           {
-                            path: 'comments',
+                            path: "comments",
                             populate: [
-                              { path: 'addedBy' },
+                              { path: "addedBy" },
                               {
-                                path: 'comments',
+                                path: "comments",
                                 populate: {
-                                  path: 'comments'
-                                }
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
+                                  path: "comments",
+                                },
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ]);
 
     if (!post) {
-      return res.status(404).send({ message: 'No post found' });
+      return res.status(404).send({ message: "No post found" });
     }
 
     if (req.currentUser._id.equals(post.addedBy) || req.currentUser.isAdmin) {
@@ -175,18 +175,37 @@ const deleteSinglePost = async (req, res, next) => {
 
       // delete post itself
       await PostModels.Post.findByIdAndDelete(req.params.id);
-      return res.status(200).json({ message: 'Sucessfully deleted' });
+      return res.status(200).json({ message: "Sucessfully deleted" });
     }
-    return res.status(301).json({ message: 'Unauthorized' });
+    return res.status(301).json({ message: "Unauthorized" });
   } catch (e) {
     next(e);
   }
 };
+
+async function searchPosts(req, res, next) {
+  console.log(req.query);
+  try {
+    const { search } = req.query;
+    const posts = await Post.find({
+      $or: [
+        { topic: { $regex: search, $options: "i" } },
+        { content: { $regex: search, $options: "i" } },
+        { addedBy: { $regex: search, $options: "i" } },
+        { comments: { $regex: search, $options: "i" } },
+      ],
+    });
+    return res.status(200).json(posts);
+  } catch (error) {
+    next(error);
+  }
+}
 
 export default {
   getAllPosts,
   createNewPost,
   getSinglePost,
   updateSinglePost,
-  deleteSinglePost
+  deleteSinglePost,
+  searchPosts,
 };
