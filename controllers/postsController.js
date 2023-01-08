@@ -93,34 +93,34 @@ const updateSinglePost = async (req, res, next) => {
     if (req.body.likeOrDislike) {
       if (req.body.likeOrDislike === 'like') {
         // if user hasn't already liked post
-        if (!user.likes || !user.likes.includes(post._id)) {
+        if (!user.likedPosts || !user.likedPosts.includes(post._id)) {
           await post.updateOne({ $inc: { likes: 1 } });
           await user.updateOne({ $push: { likes: req.params.id } });
           // if user has disliked post previously, remove post from their dislikes
-          if (user.dislikes && user.dislikes.includes(post._id)) {
+          if (user.dislikedPosts && user.dislikedPosts.includes(post._id)) {
             await post.updateOne({ $inc: { dislikes: -1 } });
             await user.updateOne({ $pull: { dislikes: req.params.id } });
           }
         }
         // if user has already liked post
-        if (user.likes && user.likes.includes(post._id)) {
+        if (user.likedPosts && user.likedPosts.includes(post._id)) {
           await post.updateOne({ $inc: { likes: -1 } });
           await user.updateOne({ $pull: { likes: req.params.id } });
         }
       }
       if (req.body.likeOrDislike === 'dislike') {
         // if user hasn't already disliked post
-        if (!user.dislikes || !user.dislikes.includes(post._id)) {
+        if (!user.dislikedPosts || !user.dislikedPosts.includes(post._id)) {
           await post.updateOne({ $inc: { dislikes: 1 } });
           await user.updateOne({ $push: { dislikes: req.params.id } });
           // if user has liked post previously, remove post from their likes
-          if (user.likes && user.likes.includes(post._id)) {
+          if (user.likedPosts && user.likedPosts.includes(post._id)) {
             await post.updateOne({ $inc: { likes: -1 } });
             await user.updateOne({ $pull: { likes: req.params.id } });
           }
         }
         // if user has already disliked post
-        if (user.dislikes && user.dislikes.includes(post._id)) {
+        if (user.dislikedPosts && user.dislikedPosts.includes(post._id)) {
           await post.updateOne({ $inc: { dislikes: -1 } });
           await user.updateOne({ $pull: { dislikes: req.params.id } });
         }
