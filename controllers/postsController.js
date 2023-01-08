@@ -187,12 +187,11 @@ async function searchPosts(req, res, next) {
   console.log(req.query);
   try {
     const { search } = req.query;
-    const posts = await Post.find({
+    console.log(search);
+    const posts = await PostModels.Post.find({
       $or: [
         { topic: { $regex: search, $options: "i" } },
         { content: { $regex: search, $options: "i" } },
-        { addedBy: { $regex: search, $options: "i" } },
-        { comments: { $regex: search, $options: "i" } },
       ],
     });
     return res.status(200).json(posts);
