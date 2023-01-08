@@ -215,7 +215,6 @@ const deleteSinglePost = async (req, res, next) => {
       const postOwner = await User.findByIdAndUpdate(post.addedBy._id, {
         $pull: { posts: post._id }
       });
-      await postOwner.save();
 
       // delete post itself
       await PostModels.Post.findByIdAndDelete(req.params.id);
