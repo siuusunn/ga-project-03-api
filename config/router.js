@@ -2,6 +2,7 @@ import express from "express";
 import commentsController from "../controllers/commentsController.js";
 import postsController from "../controllers/postsController.js";
 import usersController from "../controllers/usersController.js";
+import accountNotificationsController from "../controllers/accountNotificationsController.js";
 import { PostModels } from "../models/post.js";
 
 import secureRoute from "../middleware/secureRoute.js";
@@ -54,5 +55,7 @@ Router.route("/users/:id")
 Router.route("/register").post(usersController.registerUser);
 
 Router.route("/login").post(usersController.loginUser);
+
+Router.route("/notifications").get(secureRoute, accountNotificationsController.getNotificationsForUser)
 
 export default Router;

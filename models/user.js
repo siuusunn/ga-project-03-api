@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import mongooseHidden from 'mongoose-hidden';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { emailRegex } from '../lib/stringTesters.js';
+import accountNotification from './accountNotification.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -26,6 +27,7 @@ const userSchema = new mongoose.Schema(
     comments: [{ type: mongoose.Types.ObjectId, ref: 'Comments' }],
     likedPosts: [{ type: mongoose.Types.ObjectId, ref: 'Posts' }],
     dislikedPosts: [{ type: mongoose.Types.ObjectId, ref: 'Posts' }],
+    accountNotifications: [{ type: mongoose.Types.ObjectId, ref: 'accountNotification' }],
     cloudinaryImageId: { type: String }
   },
   { timestamps: true }
