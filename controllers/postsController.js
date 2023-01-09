@@ -9,6 +9,7 @@ const getAllPosts = async (_res, res, next) => {
     next(e);
   }
 };
+
 const createNewPost = async (req, res, next) => {
   try {
     const post = await PostModels.Post.create({
@@ -123,12 +124,22 @@ const updateSinglePost = async (req, res, next) => {
           await user.updateOne({ $pull: { dislikedPosts: req.params.id } });
         }
       }
+      const updatedPost = await post.save();
+      return res.status(200).json(updatedPost);
     } else {
-      post.set(req.body);
+      if (!post.isEdited) {
+        await post.updateOne({
+          originalTopic: post.topic,
+          originalContent: post.content,
+          isEdited: true
+        });
+        post.set(req.body);
+        const updatedPost = await post.save();
+        return res.status(200).json(updatedPost);
+      } else {
+        return res.status(403).json({message: 'Cannot edit a post which has already been edited.'});
+      }
     }
-
-    const updatedPost = await post.save();
-    return res.status(200).json(updatedPost);
   } catch (e) {
     next(e);
   }
