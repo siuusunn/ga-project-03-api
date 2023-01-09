@@ -1,4 +1,5 @@
 import { PostModels } from '../models/post.js';
+import accountNotificationsController from './accountNotificationsController.js';
 
 async function createComment(req, res, next, parentType, parentId) {
   const replyThreadDepthLimit = 6;
@@ -44,6 +45,16 @@ async function createComment(req, res, next, parentType, parentId) {
     // );
 
     const savedParent = await parent.save();
+
+    console.log('parent.addedBy = ', parent.addedBy);
+    console.log('req.currentUser = ', req.currentUser);
+
+    await accountNotificationsController.createNotification(
+      parent.addedBy,
+      req.currentUser._id,
+      'Comment',
+      parentId
+    );
 
     return res.status(201).json(savedParent);
   } catch (error) {
