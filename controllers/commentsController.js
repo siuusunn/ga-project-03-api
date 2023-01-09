@@ -1,20 +1,12 @@
 import { PostModels } from '../models/post.js';
 
 async function createComment(req, res, next, parentType, parentId) {
+  const replyThreadDepthLimit = 6;
   try {
     const newComment = {
       ...req.body,
       addedBy: req.currentUser._id
     };
-
-    if (parentType === PostModels.Comment) {
-      newComment.parentCommentId = parentId;
-    }
-    if (parentType === PostModels.Post) {
-      newComment.parentPostId = parentId;
-    }
-
-    const { _id } = await PostModels.Comment.create(newComment);
 
     const parent = await parentType.findById(parentId);
     if (!parent) {
@@ -22,6 +14,27 @@ async function createComment(req, res, next, parentType, parentId) {
         .status(404)
         .send({ message: `Parent with id ${parentId} not found` });
     }
+
+    if (parent.replyThreadDepth === replyThreadDepthLimit) {
+      return res.status(403).send({
+        message: `Comment threads cannot be deeper than ${replyThreadDepthLimit} replies`
+      });
+    }
+
+    if (parentType === PostModels.Post) {
+      newComment.parentPostId = parentId;
+      // if parent is a post, there is no ancestor, so parentPostId and parentAncestorId are the same
+      newComment.ancestorPostId = parentId;
+    }
+    if (parentType === PostModels.Comment) {
+      newComment.parentCommentId = parentId;
+      // if parent is a comment, initialize with the parent's ancestorPostId
+      newComment.ancestorPostId = parent.ancestorPostId;
+    }
+
+    newComment.replyThreadDepth = parent.replyThreadDepth + 1;
+
+    const { _id } = await PostModels.Comment.create(newComment);
 
     parent.comments.push(_id);
 
