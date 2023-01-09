@@ -137,7 +137,9 @@ const updateSinglePost = async (req, res, next) => {
         const updatedPost = await post.save();
         return res.status(200).json(updatedPost);
       } else {
-        return res.status(403).json({message: 'Cannot edit a post which has already been edited.'});
+        return res.status(403).json({
+          message: 'Cannot edit a post which has already been edited.'
+        });
       }
     }
   } catch (e) {

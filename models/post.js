@@ -8,7 +8,9 @@ const commentSchema = new mongoose.Schema(
     likes: { type: Number, min: 0, default: 0 },
     dislikes: { type: Number, min: 0, default: 0 },
     parentPostId: { type: mongoose.Schema.ObjectId, ref: 'Post' },
+    ancestorPostId: { type: mongoose.Schema.ObjectId, ref: 'Post' },
     parentCommentId: { type: mongoose.Schema.ObjectId, ref: 'Comment' },
+    replyThreadDepth: { type: Number },
     comments: [{ type: mongoose.Schema.ObjectId, ref: 'Comment' }],
     deletedComments: [{ type: mongoose.Schema.ObjectId }],
     isDeleted: { type: Boolean, default: false }
@@ -26,7 +28,8 @@ const postSchema = new mongoose.Schema(
     likes: { type: Number, min: 0, default: 0 },
     dislikes: { type: Number, min: 0, default: 0 },
     isEdited: { type: Boolean, default: false },
-    comments: [{ type: mongoose.Schema.ObjectId, ref: 'Comment' }]
+    comments: [{ type: mongoose.Schema.ObjectId, ref: 'Comment' }],
+    replyThreadDepth: { type: Number, default: 0 }
   },
   { timestamps: true }
 );
