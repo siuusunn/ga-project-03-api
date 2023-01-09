@@ -19,10 +19,13 @@ const commentSchema = new mongoose.Schema(
 const postSchema = new mongoose.Schema(
   {
     topic: { type: String, required: true, min: 1, max: 200 },
+    originalTopic: { type: String, min: 1, max: 200 },
     content: { type: String, required: true, min: 1, max: 1000 },
+    originalContent: { type: String, min: 1, max: 1000 },
     addedBy: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
     likes: { type: Number, min: 0, default: 0 },
     dislikes: { type: Number, min: 0, default: 0 },
+    isEdited: { type: Boolean, default: false },
     comments: [{ type: mongoose.Schema.ObjectId, ref: 'Comment' }]
   },
   { timestamps: true }
