@@ -49,12 +49,22 @@ async function createComment(req, res, next, parentType, parentId) {
     console.log('parent.addedBy = ', parent.addedBy);
     console.log('req.currentUser = ', req.currentUser);
 
-    await accountNotificationsController.createNotification(
-      parent.addedBy,
-      req.currentUser._id,
-      'Comment',
-      parentId
-    );
+    if (parentType === PostModels.Comment) {
+      await accountNotificationsController.createNotification(
+        parent.addedBy,
+        req.currentUser._id,
+        'Comment',
+        parentId
+      );
+    }
+    if (parentType === PostModels.Post) {
+      await accountNotificationsController.createNotification(
+        parent.addedBy,
+        req.currentUser._id,
+        'Post',
+        parentId
+      );
+    }
 
     return res.status(201).json(savedParent);
   } catch (error) {

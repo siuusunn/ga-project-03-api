@@ -1,10 +1,15 @@
 import AccountNotification from '../models/accountNotification.js';
+import mongoose from 'mongoose';
 
 const createNotification = async (
+  _req,
+  _res,
+  _next,
   forUserId,
   fromUserId,
   contentType,
-  contentId
+  contentId,
+  linksToId
 ) => {
   try {
     const newNotification = {
@@ -28,10 +33,20 @@ const createNotification = async (
   }
 };
 
-const getNotificationsForUser = async (req, res, next, userId) => {
+const getNotificationsForUser = async (req, res, next) => {
   try {
+    const userNotifications = await AccountNotification.find({
+      forUser: req.currentUser._id
+    }).exec();
+
+    if (!userNotifications) {
+      return res.status(404).send({
+        message: `Notifications could not be found for user ${req.currentUser._id}`
+      });
+    }
+    return res.status(200).json(userNotifications);
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };
 
